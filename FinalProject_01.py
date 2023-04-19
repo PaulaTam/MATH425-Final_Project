@@ -7,13 +7,15 @@ Created on Tue Mar 28 12:54:55 2023
 """
 
 import itertools
+from collections import defaultdict
 
 filename = "./FinalProjectFiles/top250movies.txt"
 
 l = []
 actor_ranks = dict()
+nested_dict = defaultdict(dict)
 
-#open top250movies file, read only, with utf-8 encoding
+#open top250movies file, read  only, with utf-8 encoding
 #put ids into set -> list -> can get index --> can check pagerank file as resource
 with open(filename, mode='r', encoding='utf-8') as f:
     #print(f.read()) #read() to check every line in file
@@ -50,11 +52,16 @@ def create_dict_of_tuples(actor_tuples):
             actor_ranks[tuple_item] += 1
         else:
             actor_ranks[tuple_item] = 1
-    
+            
+def create_nested_dict(dictionary):
+    for k, v in dictionary.items():
+        nested_dict[k[0]][k[1]] = v  
         
 dl = delimited_list(l)
 rm = [l.pop(0) for l in dl] #list comprehension for all the movie titles
 
 at = create_actor_tuples(dl)
 create_dict_of_tuples(at)
+create_nested_dict(actor_ranks)
+#print(nested_dict['Morgan Freeman'])
 #print(actor_ranks) #commented this part out since it's 880639 entries in dict()
