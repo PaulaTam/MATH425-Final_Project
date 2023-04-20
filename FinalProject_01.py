@@ -7,13 +7,13 @@ Created on Tue Mar 28 12:54:55 2023
 """
 
 import itertools
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 filename = "./FinalProjectFiles/top250movies.txt"
 
 l = []
-actor_ranks = dict()
-nested_dict = defaultdict(dict)
+filtered_ranks = {}
+#nested_dict = defaultdict(dict)
 
 #open top250movies file, read  only, with utf-8 encoding
 #put ids into set -> list -> can get index --> can check pagerank file as resource
@@ -45,23 +45,37 @@ def create_actor_tuples(movie_list):
         list_of_tuples.append(movie_tuples)
         flatlist = [element for sublist in list_of_tuples for element in sublist]
     return flatlist
-
-def create_dict_of_tuples(actor_tuples):
-    for tuple_item in actor_tuples:
-        if tuple_item in actor_ranks:
-            actor_ranks[tuple_item] += 1
-        else:
-            actor_ranks[tuple_item] = 1
             
-def create_nested_dict(dictionary):
+def highest_weights(dictionary):
     for k, v in dictionary.items():
-        nested_dict[k[0]][k[1]] = v  
+        if (v > 1):
+            filtered_ranks[k] = dictionary[k]
+            #filtered_ranks is a dictionary with all weights > 1
+                        
+def remove_low_weights(dict1):
+    output, seen = {}, set(filtered_ranks.keys())
+    for key, value in dict1.items():
+        k = tuple(key)
+        if k not in seen and tuple(reversed(key)) not in seen:
+            seen.add(k)
+            output[key] = value
+    return output
+
+def merge_dicts(dict1, dict2):
+    return (dict2.update(dict1))
         
 dl = delimited_list(l)
 rm = [l.pop(0) for l in dl] #list comprehension for all the movie titles
 
 at = create_actor_tuples(dl)
-create_dict_of_tuples(at)
-create_nested_dict(actor_ranks)
-#print(nested_dict['Morgan Freeman'])
+actor_ranks = dict(Counter(at))
+highest_weights(actor_ranks)
+ans = remove_low_weights(actor_ranks)
+merge_dicts(ans, filtered_ranks) #filtered_ranks now 879433
+
+node_list = [(k[1], k[0], v) for k, v in filtered_ranks.items()]
+#reverse order of the key to point to higher billed actors
+#print(list(filtered_ranks.keys()))
+
+#test = set(filtered_ranks.keys())
 #print(actor_ranks) #commented this part out since it's 880639 entries in dict()
