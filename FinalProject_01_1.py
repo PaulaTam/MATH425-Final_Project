@@ -5,15 +5,17 @@ Created on Tue Apr 11 12:36:20 2023
 
 @author: PaulaTam
 """
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import networkx as nx
 
 from FinalProject_01 import node_list
 
+#creating network for the actors
 G = nx.DiGraph()
 G.add_weighted_edges_from(node_list)
-weight = nx.get_edge_attributes(G,'weight')
+#weight = nx.get_edge_attributes(G,'weight')
 
+"""
 def save_network_graph(graph, file_name):
     #init figure
     plt.figure(figsize=(25, 25))
@@ -30,3 +32,9 @@ def save_network_graph(graph, file_name):
     plt.show()
     
 save_network_graph(G, "Problem_1_graph.pdf")
+"""
+
+#Page Rank
+page_rank = nx.pagerank(G)
+ordered_page_rank = sorted([(node, pagerank) for node, pagerank in page_rank.items()], key=lambda x:page_rank[x[0]], reverse=True)
+print(ordered_page_rank)
