@@ -8,38 +8,25 @@ Created on Tue Apr 11 12:36:20 2023
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from FinalProject_01 import nested_dict
+from FinalProject_01 import node_list
 
-G = nx.Graph()
+G = nx.DiGraph()
+G.add_weighted_edges_from(node_list)
+weight = nx.get_edge_attributes(G,'weight')
 
-def add_edges(dict_of_actors):
-    for k1, k2 in dict_of_actors.items():
-        for v in k2:
-            print(k1, k2, k2[v])
-            #G.add_edge(k1, k2, weight= k2[v])
-
-add_edges(nested_dict)
-
-pos = nx.spring_layout(G, seed=1)
-
-# nodes
-nx.draw_networkx_nodes(G, pos, node_size=700)
-
-# edges
-nx.draw_networkx_edges(G, pos, width=6)
-nx.draw_networkx_edges(
-    G, pos, width=6, alpha=0.5, edge_color="b", style="dashed"
-)
-
-# node labels
-nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
-# edge weight labels
-edge_labels = nx.get_edge_attributes(G, "weight")
-nx.draw_networkx_edge_labels(G, pos, edge_labels)
-
-ax = plt.gca()
-ax.margins(0.08)
-plt.axis("off")
-plt.tight_layout()
-plt.show()
-#print(actor_ranks) 
+def save_network_graph(graph, file_name):
+    #init figure
+    plt.figure(figsize=(25, 25))
+    plt.axis('off')
+    
+    pos = nx.spring_layout(G, k=3)
+    
+    nx.draw_networkx_nodes(G, pos=pos, node_size=150)
+    nx.draw_networkx_labels(G, pos=pos, font_size=8)
+    nx.draw_networkx_edges(G, pos=pos, arrows=True)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=weight, font_size=6)
+    
+    plt.savefig(file_name, bbox_inches="tight", format="PDF")
+    plt.show()
+    
+save_network_graph(G, "Problem_1_graph.pdf")

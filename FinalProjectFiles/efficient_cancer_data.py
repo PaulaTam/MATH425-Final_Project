@@ -1,7 +1,12 @@
 # Copyright 2013 Philip N. Klein
-from vec import Vec
-from vecutil import vec2list
+#from vec import Vec
+#from vecutil import vec2list #vecutil package does not exist, was unable to download
+#from vec import Vector2 #From the current vec 0.5 documentation, the only class available is Vector2
+#import pandas as pd
+import numpy as np
 from sympy import Matrix
+
+filename = "./train.data"
 
 def read_training_data(fname, D=None):
     """Given a file in appropriate format, and given a set D of features,
@@ -26,9 +31,15 @@ def read_training_data(fname, D=None):
     A = []
     b = []
     for line in file:
+        #newline = line.strip()
         row = line.split(",")
+        #print({f:float(row[feature_map[f]+2]) for f in D})
         patient_ID = int(row[0])
         b.append(-1) if row[1] == 'B' else b.append(1)
-        feature_vectors[patient_ID] = Vec(D, {f:float(row[feature_map[f]+2]) for f in D})
-        A.append(vec2list(feature_vectors[patient_ID]))
+        feature_vectors[patient_ID] = np.array(D, {f:float(row[feature_map[f]+2]) for f in D})
+        #changed Vec to numpy.array
+        A.append(feature_vectors[patient_ID].tolist())
+        #removed vec2list and used .tolist() function
     return Matrix(A), Matrix(b)
+
+read_training_data(filename)
