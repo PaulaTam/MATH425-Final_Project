@@ -2,7 +2,6 @@ import numpy as np
 import numpy.linalg as lin
 
 from efficient_cancer_data import read_training_data
-from sympy import Matrix
 
 # (a) Use the QR algorithm to find the least-squares linear model for the data.
 
@@ -33,7 +32,7 @@ from sympy import Matrix
 def least_squares(A, b):
     Q, R = lin.qr(A)
     x_hat = np.matmul(np.matmul(lin.inv(R), np.transpose(Q)), b)
-    return Matrix(x_hat)
+    return x_hat
 
 # classifier checks each variable in the passed in array to see if it is
 # non-negative. If it is non-negative, it sets a new array and the same current
