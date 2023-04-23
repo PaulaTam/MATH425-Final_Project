@@ -32,3 +32,4 @@ def read_training_data(fname, D=None):
         feature_vectors[patient_ID] = Vec(D, {f:float(row[feature_map[f]+2]) for f in D})
         A.append(vec2list(feature_vectors[patient_ID]))
     return Matrix(A), Matrix(b)
+
