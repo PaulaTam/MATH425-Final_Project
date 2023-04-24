@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 11 12:36:20 2023
 
-@author: PaulaTam
-"""
 #import matplotlib.pyplot as plt
 import networkx as nx
 
 from FinalProject_01 import node_list
 
-#creating network for the actors
+#creating directed network object for the actors where node1 points to node2
 G = nx.DiGraph()
 G.add_weighted_edges_from(node_list)
-#weight = nx.get_edge_attributes(G,'weight')
+#https://networkx.org/documentation/stable/reference/classes/generated/networkx.DiGraph.add_weighted_edges_from.html
+#add_weighted_edges_from takes in a list of tuples
+#e.g. [(node1, node2, weight)]
 
+#Page Rank
+page_rank = nx.pagerank(G)
+#sorted pagerank in descending order
+ordered_page_rank = sorted([(node, pagerank) for node, pagerank in page_rank.items()], key=lambda x:page_rank[x[0]], reverse=True)
+print(ordered_page_rank)
+
+#commented out is the function initially used to try and make a visualization for the directed network
+#however due to complications, the graph does not finish drawing in a reasonable time
 """
 def save_network_graph(graph, file_name):
     #init figure
@@ -22,6 +28,7 @@ def save_network_graph(graph, file_name):
     plt.axis('off')
     
     pos = nx.spring_layout(G, k=3)
+    weight = nx.get_edge_attributes(G,'weight')
     
     nx.draw_networkx_nodes(G, pos=pos, node_size=150)
     nx.draw_networkx_labels(G, pos=pos, font_size=8)
@@ -33,8 +40,3 @@ def save_network_graph(graph, file_name):
     
 save_network_graph(G, "Problem_1_graph.pdf")
 """
-
-#Page Rank
-page_rank = nx.pagerank(G)
-ordered_page_rank = sorted([(node, pagerank) for node, pagerank in page_rank.items()], key=lambda x:page_rank[x[0]], reverse=True)
-print(ordered_page_rank)
