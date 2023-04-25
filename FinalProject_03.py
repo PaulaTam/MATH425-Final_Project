@@ -33,4 +33,12 @@ def read_set_and_labels(file_set, file_label):
     
     return data_set, data_labels
 
+#this function is to check if the dataset correctly outputs image
+def show_data(data_set):
+    data_set.shape = (20, 20) #since each data point it a 20x20 matrix
+    show = data_set.T #transpose the image since the original is rotated sideways
+    plt.imshow(show, cmap='gray') #show the image in black and white
+
 data_set, data_labels = read_set_and_labels(training_set, training_set_labels)
+show_data(data_set[3333]) #shows image of 8
+print(data_labels[3333]) #prints 8
