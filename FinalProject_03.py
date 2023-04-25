@@ -15,6 +15,7 @@ test_set="./FinalProjectFiles/handwriting_test_set.txt" #1000x400
 
 #Make classifier for handwriting
 #Use training set and compute SVD fo each class/digit matrix
+#we want to look at U.T if using A, V if we are looking at A.T (A transpose)
 #Use SVD to do classification on 5, 10, 15, 20 vectors as a basis
 
 #this function is to read both the set and label files and create arrays for them
@@ -40,14 +41,25 @@ def read_set_and_labels(file_set, file_label):
 def create_index(file_label):
     index = []
     for i in range(10): #range from 0-9 --> our values for the labels
-        index.append(np.where(file_label==i)[0])
+        index.append(np.where(file_label==i)[0]) #without [0], returns tuple of numpy arrays
+        #[0] is the row, [1] is all 0s since the 0 column since label array is just a vector
     return index #returns a list of arrays that contain the row index for each number from 0-9
+
+def svd(data_set, data_index):
+    SVD = []
+    for i in range(10): #to iterate from 0-9
+        row = data_index[i] 
+        A = data_set[row].T #need to transpose the data
+        U, S, Vt = np.linalg.svd(A, full_matrices=False) #full_matrices=False since we are working with 2D arrays
+        SVD.append([U, S, Vt]) #returning svd
+        #to check
+        #A_x = U @ np.diag(S) @ Vt #can use @ as a shorcut for np.matmul
+    return SVD
   
-    
 #this function is to check if the dataset correctly outputs image
 def show_data(data_set):
     #each row is (400,), therefore we need to shape it to a 20x20 matrix to show image
-    data_set.shape = (20, 20) #since each data point it a 20x20 matrix
+    data_set.shape = (20, 20) #since each data point is a 20x20 matrix #.reshape breaks it
     show = data_set.T #transpose the image since the original is rotated sideways, can transpose bc its a numpy array
     plt.imshow(show, cmap='gray') #show the image in black and white instead of a bunch of colors
     
@@ -56,6 +68,9 @@ train_index = create_index(train_data_labels)
 #show_data(train_data_set[3333]) #shows image of 8
 #print(train_data_labels[3333]) #prints 8
 #print(train_index)
+
+svd_train = svd(train_data_set, train_index)
+#print(svd_train[0])
 
 test_data_set, test_data_labels = read_set_and_labels(test_set, test_set_labels)
 test_index = create_index(test_data_labels)
