@@ -1,19 +1,16 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import itertools
 from collections import Counter
 
 filename = "./FinalProjectFiles/top250movies.txt"
 
-l = []
-filtered_ranks = {}
-
+def open_file(filename):
 #open top250movies file, read  only, with utf-8 encoding
-with open(filename, mode='r', encoding='utf-8') as f:
-    for line in f:
-        l.append(line.rstrip())
-        #for every line in the file, strip trailing characters and append line to list
+    with open(filename, mode='r', encoding='utf-8') as f:
+        l = []
+        for line in f:
+            l.append(line.rstrip())
+            #for every line in the file, strip trailing characters and append line to list
+        return l
 
 #this function is to split each line by the "/" delimiter
 def slash_delimiter(string):
@@ -43,13 +40,15 @@ def create_actor_tuples(movie_list):
 
 #this function returns all tuples with weights that are greater than 1
 def highest_weights(dictionary):
+    filtered_ranks = {}
     for k, v in dictionary.items():
         if (v > 1):
             filtered_ranks[k] = dictionary[k]
+    return filtered_ranks
             
 #this function compares any tuples with it's reversed tuple and keeps the tuple with the highest weight            
-def remove_low_weights(dict1):
-    output, seen = {}, set(filtered_ranks.keys())
+def remove_low_weights(dict1, dict2):
+    output, seen = {}, set(dict2.keys())
     #initializing seen set with the tuples that are in filtered_ranks
     #set comparison as time complexity is near O(1)
     for key, value in dict1.items():
@@ -62,15 +61,16 @@ def remove_low_weights(dict1):
 #this function merges 2 dictionaries together into 1
 def merge_dicts(dict1, dict2):
     return (dict2.update(dict1))
-        
+
+l = open_file(filename)       
 dl = delimited_list(l)
 rm = [l.pop(0) for l in dl] #list comprehension to remove movie titles from each line
 
 at = create_actor_tuples(dl)
 actor_ranks = dict(Counter(at)) #use of collections.Counter() to get weights of tuples, 880639 keys
-highest_weights(actor_ranks)
-ans = remove_low_weights(actor_ranks)
-merge_dicts(ans, filtered_ranks) #filtered_ranks now 879433 keys
+filtered_ranks = highest_weights(actor_ranks)
+final = remove_low_weights(actor_ranks, filtered_ranks)
+merge_dicts(final, filtered_ranks) #filtered_ranks now 879433 keys
 
 node_list = [(k[1], k[0], v) for k, v in filtered_ranks.items()]
 #reverse order of the key tuple to point to higher billed actors

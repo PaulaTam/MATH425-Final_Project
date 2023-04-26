@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 #import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -17,7 +14,7 @@ G.add_weighted_edges_from(node_list)
 page_rank = nx.pagerank(G)
 #sorted pagerank in descending order
 ordered_page_rank = sorted([(node, pagerank) for node, pagerank in page_rank.items()], key=lambda x:page_rank[x[0]], reverse=True)
-print(ordered_page_rank)
+print(ordered_page_rank[:10])
 
 #commented out is the function initially used to try and make a visualization for the directed network
 #however due to complications, the graph does not finish drawing in a reasonable time
