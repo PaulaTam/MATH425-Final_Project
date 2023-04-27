@@ -5,6 +5,7 @@ Final Group Project for Math-425 Spring 2023
 
 ### Problem 1
 **networkx**
+
 how to install with pip with dependencies:
  > pip install networkx[default]
 
@@ -16,6 +17,7 @@ how to install with conda-forge:
   
 ### Problem 2
 **numpy**
+
 how to install with pip:
  > pip install numpy
   
@@ -26,6 +28,7 @@ how to install with conda-forge:
 **numpy** (refer to Problem 2 imports)
 
 **matplotlib**
+
 how to install with pip:
  > pip install matplotlib
 
