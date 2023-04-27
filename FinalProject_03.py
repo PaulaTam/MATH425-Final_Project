@@ -1,6 +1,5 @@
 import csv
 import numpy as np
-import sympy as sym
 import matplotlib.pyplot as plt
 
 training_set_labels="./FinalProjectFiles/handwriting_training_set_labels.txt"
@@ -51,7 +50,6 @@ def svd(data_set, data_index):
         row = data_index[i] 
         A = data_set[row].T #need to transpose the data
         U, S, Vt = np.linalg.svd(A, full_matrices=False) #full_matrices=False since we are working with 2D arrays    U, S, V_T = np.linalg.svd(A, full_matrices=False)
-
         SVD.append([U, S, Vt]) #returning svd
         #to check
         #A_x = U @ np.diag(S) @ Vt #can use @ as a shorcut for np.matmul
@@ -78,10 +76,10 @@ test_data_set, test_data_labels = read_set_and_labels(test_set, test_set_labels)
 test_index = create_index(test_data_labels)
 #print(test_index)
 
+"""
+#original classification function
+#THIS IS HERE JUST IN CASE WE NEED TO REFER TO THE OLD VERSION
 
-projections = []
-        
-accuracies = []
 def classification(accuracies, projections, test_data_labels):
     # classify the test set using the first k basis vectors for k in [5, 10, 15, 20]
     for k in [5, 10, 15, 20]: #5-20 singular vector basis 
@@ -104,8 +102,44 @@ def classification(accuracies, projections, test_data_labels):
         accuracies.append(accuracy) #update the accuracy list 
         print(f"Accuracy using first {k} basis vectors: {accuracy:.2f}") #printing value of k and accuracy formatting with 2f
 
+"""
+
+def classification(accuracies, test_data_labels):
+    # classify the test set using the first k basis vectors for k in [5, 10, 15, 20]
+    for k in [5, 10, 15, 20]: #5-20 singular vector basis 
+        correct = 0 #keep track on what is classified correctly?
+        for i in range(1):#len(test_data_labels)):
+            test_digit = test_data_set[i].T #transpose into a column vector 
+            prediction = 0 #keep track of the predicted digit label 
+            
+            #initial value
+            svd_matrices = svd_train[0] #tuple containing SVD of the training set for digit j 
+            u_matrix = svd_matrices[0] #creating U matrix so it can be multiplied by test_digit
+            projection = u_matrix[:, :k].T @ test_digit #creating the projection
+            max_similarity = np.linalg.norm(projection) # using euclidean distance as similarity measure
+            
+                
+            for j in range(1,10): #looping over digits 1-9
+                svd_matrices_j = svd_train[j] #tuple containing SVD of the training set for digit j 
+                u_matrix = svd_matrices_j[0] #creating U matrix so it can be multiplied by test_digit
+                projection_j = u_matrix[:, :k].T @ test_digit #creating the projection
+                similarity = np.linalg.norm(projection_j) # using euclidean distance as similarity measure
+                #print(similarity)
+                if (similarity < max_similarity):
+                    max_similarity = similarity
+                    prediction = j
+                    #print(prediction)
+            
+            if prediction == test_data_labels[i]:
+                correct += 1
+        accuracy = correct / len(test_data_labels) #computed accuracy score for classification
+        accuracies.append(accuracy) #update the accuracy list 
+        
+        #print(prediction)
+        print(f"Accuracy using first {k} basis vectors: {accuracy:.2f}") #printing value of k and accuracy formatting with 2f
+
 accuracies = [] # initialize the accuracy list
-classification(accuracies, projections, test_data_labels) # call the classification function with the accuracy list as an argument
+classification(accuracies, test_data_labels) # call the classification function with the accuracy list as an argument
 
 # plot the accuracy as a function of the number of basis vectors used
 plt.plot([5, 10, 15, 20], accuracies, '-o')
@@ -114,5 +148,3 @@ plt.xlabel("Number of basis vectors")
 plt.ylabel("Classification accuracy")
 plt.show()
 
-        
-      
