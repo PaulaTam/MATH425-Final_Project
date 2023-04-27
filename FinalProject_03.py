@@ -76,11 +76,11 @@ test_data_set, test_data_labels = read_set_and_labels(test_set, test_set_labels)
 test_index = create_index(test_data_labels)
 #print(test_index)
 
-"""
+
 #original classification function
 #THIS IS HERE JUST IN CASE WE NEED TO REFER TO THE OLD VERSION
 
-def classification(accuracies, projections, test_data_labels):
+def classification(accuracies, test_data_labels):
     # classify the test set using the first k basis vectors for k in [5, 10, 15, 20]
     for k in [5, 10, 15, 20]: #5-20 singular vector basis 
         correct = 0 #keep track on what is classified correctly?
@@ -97,13 +97,19 @@ def classification(accuracies, projections, test_data_labels):
                     max_similarity = similarity
                     prediction = j
             if prediction == test_data_labels[i]:
+                #print(prediction, test_data_labels[i])
+                #print("true ", i, ",", prediction, ",", test_data_labels[i])
                 correct += 1
+            elif prediction != test_data_labels[i]:
+                print("false ", i, ",", prediction, ",", test_data_labels[i])
+                
         accuracy = correct / len(test_data_labels) #computed accuracy score for classification
         accuracies.append(accuracy) #update the accuracy list 
         print(f"Accuracy using first {k} basis vectors: {accuracy:.2f}") #printing value of k and accuracy formatting with 2f
 
-"""
 
+
+"""
 def classification(accuracies, test_data_labels):
     # classify the test set using the first k basis vectors for k in [5, 10, 15, 20]
     for k in [5, 10, 15, 20]: #5-20 singular vector basis 
@@ -137,14 +143,16 @@ def classification(accuracies, test_data_labels):
         
         #print(prediction)
         print(f"Accuracy using first {k} basis vectors: {accuracy:.2f}") #printing value of k and accuracy formatting with 2f
-
+"""
 accuracies = [] # initialize the accuracy list
 classification(accuracies, test_data_labels) # call the classification function with the accuracy list as an argument
 
+"""
 # plot the accuracy as a function of the number of basis vectors used
-plt.plot([5, 10, 15, 20], accuracies, '-o')
+plt.plot([20], accuracies, '-o')
 plt.title("Classification accuracy as a function of the number of basis vectors used")
 plt.xlabel("Number of basis vectors")
 plt.ylabel("Classification accuracy")
 plt.show()
-
+"""
+show_data(test_data_set[547])
