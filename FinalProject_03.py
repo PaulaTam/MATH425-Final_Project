@@ -100,8 +100,8 @@ def classification(accuracies, test_data_labels):
                 #print(prediction, test_data_labels[i])
                 #print("true ", i, ",", prediction, ",", test_data_labels[i])
                 correct += 1
-            elif prediction != test_data_labels[i]:
-                print("false ", i, ",", prediction, ",", test_data_labels[i])
+           #elif prediction != test_data_labels[i]:
+                #print("false ", i, ",", prediction, ",", test_data_labels[i])
                 
         accuracy = correct / len(test_data_labels) #computed accuracy score for classification
         accuracies.append(accuracy) #update the accuracy list 
@@ -147,12 +147,13 @@ def classification(accuracies, test_data_labels):
 accuracies = [] # initialize the accuracy list
 classification(accuracies, test_data_labels) # call the classification function with the accuracy list as an argument
 
-"""
 # plot the accuracy as a function of the number of basis vectors used
-plt.plot([20], accuracies, '-o')
+plt.plot([5, 10, 15, 20], accuracies, '-o')
 plt.title("Classification accuracy as a function of the number of basis vectors used")
 plt.xlabel("Number of basis vectors")
 plt.ylabel("Classification accuracy")
 plt.show()
-"""
-show_data(test_data_set[547])
+
+
+
+#show_data(test_data_set[547])
