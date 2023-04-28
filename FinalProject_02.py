@@ -1,6 +1,8 @@
 import numpy as np
 import numpy.linalg as lin
 
+import sys
+sys.path.insert(1, './FinalProjectFiles')
 from efficient_cancer_data import read_training_data
 
 # (a) Use the QR algorithm to find the least-squares linear model for the data.
@@ -66,8 +68,8 @@ def compare(b, c):
     return float((Percentage / (X*Y)) * 100)
 
 
-A_train, b_train = read_training_data('./train.data')
-A_valid, b_valid = read_training_data('./validate.data')
+A_train, b_train = read_training_data('./FinalProjectFiles/train.data')
+A_valid, b_valid = read_training_data('./FinalProjectFiles/validate.data')
 
 A_train = np.array(A_train).astype(np.float64)
 b_train = np.array(b_train).astype(np.float64)
