@@ -101,12 +101,16 @@ def classification(accuracies, test_data_set, test_data_labels):
 accuracies = [] # initialize the accuracy list
 classification(accuracies, test_data_set, test_data_labels) # call the classification function with the accuracy list as an argument
 
-def two_stage_classification(accuracies, test_data_labels):
+def two_stage_classification(test_data_labels):
     correct_counter = 0
+    correctness_counter_per_digit = [0,0,0,0,0,0,0,0,0,0] # value at each indices holds the number of times that digit was predicted correctly
+    # digit_counter = [0,0,0,0,0,0,0,0,0,0] #keeps count number of times a digit appears
+    failed_single_basis_indices = [] #holds the indices of test_data_labels that failed
     
     #iterate through the test_labels
     for i in range(len(test_data_labels)):
-        test_set_vector = test_data_set[i].T #take the a single row in the tandwristing_test_set and transpose to a column vector
+        # digit_counter[int(test_data_labels[i])]+=1 #the index of digit_counter matches the value at test_data_labels[i]
+        test_set_vector = test_data_set[i].T #take the a single row in the handwristing_test_set and transpose to a column vector
         svd_matrices = svd_train[0] #only checking against test against the matrices that is a renders a zero picture
         u_matrix = svd_matrices[0]
         
@@ -127,9 +131,23 @@ def two_stage_classification(accuracies, test_data_labels):
                 prediction = j
         if prediction == test_data_labels[i]:
                 correct_counter+=1
-        print("the prediction was: ", prediction, "the actual digit: ", test_data_labels[i])
+                if prediction == 0:#increment index 0 if prediction is a zero digit
+                    correctness_counter_per_digit[0]+=1
+                else:
+                    correctness_counter_per_digit[prediction]+=1 #the prediction value matches the index of the array                    
+        else: #prediction failed
+            failed_single_basis_indices.append(i)#keeps track of which indices the prediction failed
         
-    print("the correct percentage of using 1 singular basis is: ", correct_counter/len(test_data_labels)*100)
+    #plot result of prediction with 1 basis vector
+    digits = [0,1,2,3,4,5,6,7,8,9]
+    correct_percentage_per_digit = []
+    for value in correctness_counter_per_digit:
+        correct_percentage_per_digit.append(value/100)
+    plt.title("Accuracy for each digit using one singular basis vector")
+    plt.bar(digits, correct_percentage_per_digit)
+    plt.xlabel("Digits")
+    plt.ylabel("Accuracy")
+    plt.show()
     
 # plot the accuracy as a function of the number of basis vectors used
 plt.plot([5, 10, 15, 20], accuracies, '-o')
