@@ -65,22 +65,13 @@ def show_data(data_set):
 
 train_data_set, train_data_labels = read_set_and_labels(training_set, training_set_labels)
 train_index = create_index(train_data_labels)
-#show_data(train_data_set[3333]) #shows image of 8
-#print(train_data_labels[3333]) #prints 8
-#print(train_index)
-
-svd_train = svd(train_data_set, train_index)
-#print(svd_train[0])
 
 test_data_set, test_data_labels = read_set_and_labels(test_set, test_set_labels)
 test_index = create_index(test_data_labels)
-#print(test_index)
 
+svd_train = svd(train_data_set, train_index)
 
-#original classification function
-#THIS IS HERE JUST IN CASE WE NEED TO REFER TO THE OLD VERSION
-
-def classification(accuracies, test_data_labels):
+def classification(accuracies, test_data_set, test_data_labels):
     # classify the test set using the first k basis vectors for k in [5, 10, 15, 20]
     for k in [5, 10, 15, 20]: #5-20 singular vector basis 
         correct = 0 #keep track on what is classified correctly?
@@ -107,45 +98,8 @@ def classification(accuracies, test_data_labels):
         accuracies.append(accuracy) #update the accuracy list 
         print(f"Accuracy using first {k} basis vectors: {accuracy:.2f}") #printing value of k and accuracy formatting with 2f
 
-
-
-"""
-def classification(accuracies, test_data_labels):
-    # classify the test set using the first k basis vectors for k in [5, 10, 15, 20]
-    for k in [5, 10, 15, 20]: #5-20 singular vector basis 
-        correct = 0 #keep track on what is classified correctly?
-        for i in range(1):#len(test_data_labels)):
-            test_digit = test_data_set[i].T #transpose into a column vector 
-            prediction = 0 #keep track of the predicted digit label 
-            
-            #initial value
-            svd_matrices = svd_train[0] #tuple containing SVD of the training set for digit j 
-            u_matrix = svd_matrices[0] #creating U matrix so it can be multiplied by test_digit
-            projection = u_matrix[:, :k].T @ test_digit #creating the projection
-            max_similarity = np.linalg.norm(projection) # using euclidean distance as similarity measure
-            
-                
-            for j in range(1,10): #looping over digits 1-9
-                svd_matrices_j = svd_train[j] #tuple containing SVD of the training set for digit j 
-                u_matrix = svd_matrices_j[0] #creating U matrix so it can be multiplied by test_digit
-                projection_j = u_matrix[:, :k].T @ test_digit #creating the projection
-                similarity = np.linalg.norm(projection_j) # using euclidean distance as similarity measure
-                #print(similarity)
-                if (similarity < max_similarity):
-                    max_similarity = similarity
-                    prediction = j
-                    #print(prediction)
-            
-            if prediction == test_data_labels[i]:
-                correct += 1
-        accuracy = correct / len(test_data_labels) #computed accuracy score for classification
-        accuracies.append(accuracy) #update the accuracy list 
-        
-        #print(prediction)
-        print(f"Accuracy using first {k} basis vectors: {accuracy:.2f}") #printing value of k and accuracy formatting with 2f
-"""
 accuracies = [] # initialize the accuracy list
-classification(accuracies, test_data_labels) # call the classification function with the accuracy list as an argument
+classification(accuracies, test_data_set, test_data_labels) # call the classification function with the accuracy list as an argument
 
 # plot the accuracy as a function of the number of basis vectors used
 plt.plot([5, 10, 15, 20], accuracies, '-o')
@@ -154,6 +108,12 @@ plt.xlabel("Number of basis vectors")
 plt.ylabel("Classification accuracy")
 plt.show()
 
-
-
-#show_data(test_data_set[547])
+def check_singular_values(svd):
+    sv_lengths = []
+    for usvt in svd: #for every svd (each digit has their own svd)
+        s = list(usvt[1]) #get the singular values. it is represented as a vector
+        cut = set(s) #since sigma values are unique, we can remove duplicate values using set()
+        sv_lengths.append(len(cut)) #length of the set
+    return sv_lengths
+        
+sv = check_singular_values(svd_train)
