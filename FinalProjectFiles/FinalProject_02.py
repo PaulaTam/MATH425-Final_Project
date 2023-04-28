@@ -29,6 +29,8 @@ from efficient_cancer_data import read_training_data
 # inverse(transpose(R)) * transpose(R) * R * x = inverse(transpose(R)) * transpose(R) * transpose(Q) * b
 # R * x = transpose(Q) * b
 # x = inverse(R) * tranpose(Q) * b
+
+# least_squares solves for x_hat and returns the matrix (array)
 def least_squares(A, b):
     Q, R = lin.qr(A)
     x_hat = np.matmul(np.matmul(lin.inv(R), np.transpose(Q)), b)
@@ -65,34 +67,47 @@ def compare(b, c):
     
     return float((Percentage / (X*Y)) * 100)
 
-
+# get the A and b matrices from train.data and validate.data
 A_train, b_train = read_training_data('./train.data')
 A_valid, b_valid = read_training_data('./validate.data')
 
+# convert A and b to float arrays so they work nicely with they
+# can be uset in matmul because Matrix is no subscriptable
 A_train = np.array(A_train).astype(np.float64)
 b_train = np.array(b_train).astype(np.float64)
 
 A_valid = np.array(A_valid).astype(np.float64)
 b_valid = np.array(b_valid).astype(np.float64)
 
+# find the x_hat of train.data and validate.data
 x_train_hat = least_squares(A_train, b_train)
 x_valid_hat = least_squares(A_valid, b_valid)
 
+# solve b_hat of train.data and validate.data using the original A
+# and the solved x_hat
 b_train_hat = np.matmul(A_train, x_train_hat)
 b_valid_hat = np.matmul(A_valid, x_valid_hat)
 
+# create a new array c which is just a simplified version of the
+# b_hat array which has the values at each position to be either a 
+# 1 or -1
 c_train = classifier(b_train_hat)
 c_valid = classifier(b_valid_hat)
 
+# compare c to the original b to see how accurately the calculation
+# and classification were able to match up to the original b
 percentage_train = compare(b_train, c_train)
 percentage_valid = compare(b_valid, c_valid)
 
-print("train.data incorrect classification percentage: ", 100 - percentage_train, "\n")
+print("train.data correct classification percentage: ", percentage_train)
+print("validate.data correct classification percentage: ", percentage_valid, "\n")
+
+print("train.data incorrect classification percentage: ", 100 - percentage_train)
 print("validate.data incorrect classification percentage: ", 100 - percentage_valid, "\n")
 
 if percentage_train > percentage_valid:
-    print("The success rate of guesses in regards to train.data were greater than that of validate.data")
+    print("The success rate of guesses in regards to train.data is greater than that of validate.data")
 elif percentage_train < percentage_valid:
-    print("The success rate of guesses in regards to validate.data were greater than that of train.data")
+    print("The success rate of guesses in regards to validate.data is greater than that of train.data")
 else:
     print("validate.data and train.data had the same success rate")
