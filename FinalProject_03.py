@@ -104,32 +104,30 @@ classification(accuracies, test_data_set, test_data_labels) # call the classific
 def two_stage_classification(accuracies, test_data_labels):
     correct_counter = 0
     
-    #iterate through the test_labels and predict digits using 1 singular value
+    #iterate through the test_labels
     for i in range(20):
-        print("Testing a new row in test set: ", i)
         test_set_vector = test_data_set[i].T #take the a single row in the tandwristing_test_set and transpose to a column vector
         svd_matrices = svd_train[0] #only checking against test against the matrices that is a renders a zero picture
         u_matrix = svd_matrices[0]
-        projection_of_test_vector_onto_u_column_vector = u_matrix[:, :1].T @ test_set_vector
-        orthogonal_complement_distance = np.linalg.norm(test_set_vector - projection_of_test_vector_onto_u_column_vector)
-        smallest_orthogonal_complement_norm = orthogonal_complement_distance
-        print("Z = ", orthogonal_complement_distance, "smallest z value: ", smallest_orthogonal_complement_norm)
+        
+        #calculuate the z for digit 0
+        projection_of_test_vector_onto_u_column_vector = u_matrix[0] * u_matrix[0].T * test_set_vector
+        z = np.linalg.norm(test_set_vector - projection_of_test_vector_onto_u_column_vector)
+        smallest_z = z
         prediction = 0
-        print("Testing a new row in test set: ", i)
+
+        #test against 1 on and onwards (with same test_set_vector)
         for j in range(1,10):
-            print("testing j = ", j)
-            u_matrix = svd_matrices[0]
             svd_matrices = svd_train[j] #checking against matrices that render digits 1 and onwards
             u_matrix = svd_matrices[0]
-            orthogonal_complement_distance = np.linalg.norm(test_set_vector - projection_of_test_vector_onto_u_column_vector)
-            print("Z = ", orthogonal_complement_distance)
-            if orthogonal_complement_distance < smallest_orthogonal_complement_norm:
-                smallest_orthogonal_complement_norm = orthogonal_complement_distance
+            projection_of_test_vector_onto_u_column_vector = u_matrix[0] * u_matrix[0].T * test_set_vector #proj A onto B = B * B^t * A
+            z = np.linalg.norm(test_set_vector - projection_of_test_vector_onto_u_column_vector) #calculates the magnitude of z
+            if (z < smallest_z):
+                smallest_z = z
                 prediction = j
-                
         if prediction == test_data_labels[i]:
                 correct_counter+=1
-        print("the prediction was: ", prediction, "the actual digit: ", i)
+        print("the prediction was: ", prediction, "the actual digit: ", test_data_labels[i])
         
     print("the correct percentage of using 1 singular basis is: ", correct_counter/len(test_data_labels)*100)
     
