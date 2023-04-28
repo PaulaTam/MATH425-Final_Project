@@ -105,7 +105,7 @@ def two_stage_classification(accuracies, test_data_labels):
     correct_counter = 0
     
     #iterate through the test_labels
-    for i in range(20):
+    for i in range(len(test_data_labels)):
         test_set_vector = test_data_set[i].T #take the a single row in the tandwristing_test_set and transpose to a column vector
         svd_matrices = svd_train[0] #only checking against test against the matrices that is a renders a zero picture
         u_matrix = svd_matrices[0]
