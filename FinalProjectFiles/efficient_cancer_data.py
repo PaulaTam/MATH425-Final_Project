@@ -36,10 +36,6 @@ def read_training_data(fname, D=None):
         #print({f:float(row[feature_map[f]+2]) for f in D})
         patient_ID = int(row[0])
         b.append(-1) if row[1] == 'B' else b.append(1)
-        feature_vectors[patient_ID] = np.array(D, {f:float(row[feature_map[f]+2]) for f in D})
-        #changed Vec to numpy.array
-        A.append(feature_vectors[patient_ID].tolist())
-        #removed vec2list and used .tolist() function
+        feature_vectors[patient_ID] = Vec(D, {f:float(row[feature_map[f]+2]) for f in D})
+        A.append(vec2list(feature_vectors[patient_ID]))
     return Matrix(A), Matrix(b)
-
-read_training_data(filename)
