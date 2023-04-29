@@ -1,8 +1,7 @@
 # Copyright 2013 Philip N. Klein
-#from vec import Vec
-#from vecutil import vec2list #vecutil package does not exist, was unable to download
-#from vec import Vector2 #From the current vec 0.5 documentation, the only class available is Vector2
-#import pandas as pd
+from vec import Vec
+from vecutil import vec2list
+
 import numpy as np
 from sympy import Matrix
 
