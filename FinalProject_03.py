@@ -91,6 +91,7 @@ test_index = create_index(test_data_labels)
 accuracies = []  # holds the accuracy for the 5, 10, 15, 20 basis result
 classification_function_call_counter = 0
 digits_to_skip = []  # holds the values of test_data_labels to skip
+number_of_classifications = 0
 
 def classification(test_data_labels):
     # classify the test set using the first k basis vectors for k in [5, 10, 15, 20]
@@ -102,6 +103,8 @@ def classification(test_data_labels):
             if test_data_labels[i] in digits_to_skip:   #if label value matches the digits that we don't need to test end current iteration
                 continue 
             # transpose into a column vector
+            global number_of_classifications
+            number_of_classifications += 1
             test_set_vector = test_data_set[i].T
             max_similarity = 0  # keep track of similarity
             prediction = None  # keep track of the predicted digit label
@@ -124,9 +127,9 @@ def classification(test_data_labels):
                 else:
                     # the prediction value matches the index of the array
                     correctness_counter_per_digit[prediction] += 1
-                    
+                        
         # computed accuracy score for classification
-        accuracy = correct / len(test_data_labels)
+        accuracy = correct / number_of_classifications 
         global accuracies
         accuracies.append(accuracy)  # update the accuracy list
         
@@ -141,6 +144,8 @@ def classification(test_data_labels):
         plt.xlabel("Digits")
         plt.ylabel("Accuracy")
         plt.show()
+        
+        number_of_classifications = 0 #clear the counter for accuracy
 
     # plot the accuracy as a function of the number of basis vectors used
     plt.plot([5,10,15,20], accuracies)
@@ -155,45 +160,100 @@ test data using the first singular basis vector in U from SVD.
 A bar graph will be generated once the result has compiled.
 classification function is then called if there are if the number of
 digits to skip is less then 10 (if there are 10 digits to skip this means
-all 10 digit has sucessful prediction rate above 50%).
+all 10 digit has sucessful prediction rate above 80%).
 """
+# def two_stage_classification(test_data_labels):
+#     correct_counter = 0
+#     # value at each indices holds the number of times that digit was predicted correctly
+#     correctness_counter_per_digit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+#     global digits_to_skip #holds which digit to skip in test_set_labels
+
+#     # iterate through the test_labels
+#     for i in range(len(test_data_labels)):
+#         # digit_counter[int(test_data_labels[i])]+=1 #the index of digit_counter matches the value at test_data_labels[i]
+#         # take the a single row in the handwristing_test_set and transpose to a column vector
+#         test_set_vector = test_data_set[i].T
+#         # only checking against test against the matrices that is a renders a zero picture
+#         svd_matrices = svd_train[0]
+#         u_matrix = svd_matrices[0]
+
+#         # calculuate the z for digit 0
+#         projection_of_test_vector_onto_u_column_vector = u_matrix[0] * u_matrix[0].T * test_set_vector
+#         z = np.linalg.norm(test_set_vector - projection_of_test_vector_onto_u_column_vector)
+#         smallest_z = z
+#         prediction = 0
+
+#         # test against 1 on and onwards (with same test_set_vector)
+#         for j in range(1, 10):
+#             # checking against matrices that render digits 1 and onwards
+#             svd_matrices = svd_train[j]
+#             u_matrix = svd_matrices[0]
+#             # proj A onto B = B * B^t * A
+#             # projection_of_test_vector_onto_u_column_vector = u_matrix[0]  u_matrix[0].T  test_set_vector
+#             uut = np.multiply(u_matrix[0], u_matrix[0].T )
+#             projection_of_test_vector_onto_u_column_vector = np.multiply(uut, test_set_vector)
+#             # calculates the magnitude of z
+#             z = np.linalg.norm(test_set_vector -
+#                                projection_of_test_vector_onto_u_column_vector)
+#             if (z < smallest_z):
+#                 smallest_z = z
+#                 prediction = j
+                
+#         if prediction == test_data_labels[i]:
+#             correct_counter += 1
+#             if prediction == 0:  # increment index 0 if prediction is a zero digit
+#                 correctness_counter_per_digit[0] += 1
+#             else:
+#                 # the prediction value matches the index of the array
+#                 correctness_counter_per_digit[prediction] += 1
+
+
+#     # plot result of prediction with 1 basis vector
+#     digits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+#     correct_percentage_per_digit = []
+#     for i in range(len(correctness_counter_per_digit)):
+#         correct_percentage_per_digit.append(correctness_counter_per_digit[i]/100)
+#         if correctness_counter_per_digit[i]/100 >= .50:    #determine which digit to skip
+#             digits_to_skip.append(i)      
+#     plt.title("Accuracy for each digit using one singular basis vector")
+#     plt.bar(digits, correct_percentage_per_digit)
+#     plt.xlabel("Digits")
+#     plt.ylabel("Accuracy")
+#     plt.show()
+    
+#     print("Accuracy using the first basis vector is: ", correct_counter/1000)
+    
+#     """
+#     classification function is called and will skip any test data that has 
+#     labels that has a high prediction success rate since the result has been
+#     calculated using the first basis vector
+#     """
+#     if len(digits_to_skip) != 10:        
+#         classification(test_data_labels)
+
+
 def two_stage_classification(test_data_labels):
     correct_counter = 0
     # value at each indices holds the number of times that digit was predicted correctly
     correctness_counter_per_digit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     global digits_to_skip #holds which digit to skip in test_set_labels
 
-    # iterate through the test_labels
     for i in range(len(test_data_labels)):
-        # digit_counter[int(test_data_labels[i])]+=1 #the index of digit_counter matches the value at test_data_labels[i]
-        # take the a single row in the handwristing_test_set and transpose to a column vector
         test_set_vector = test_data_set[i].T
-        # only checking against test against the matrices that is a renders a zero picture
-        svd_matrices = svd_train[0]
-        u_matrix = svd_matrices[0]
-
-        # calculuate the z for digit 0
-        projection_of_test_vector_onto_u_column_vector = u_matrix[0] * \
-            u_matrix[0].T * test_set_vector
-        z = np.linalg.norm(test_set_vector -
-                           projection_of_test_vector_onto_u_column_vector)
-        smallest_z = z
-        prediction = 0
-
-        # test against 1 on and onwards (with same test_set_vector)
-        for j in range(1, 10):
-            # checking against matrices that render digits 1 and onwards
+        
+        max_similarity = 0
+        prediction = None
+        
+        for j in range(10):
             svd_matrices = svd_train[j]
             u_matrix = svd_matrices[0]
-            # proj A onto B = B * B^t * A
-            projection_of_test_vector_onto_u_column_vector = u_matrix[0] * \
-                u_matrix[0].T * test_set_vector
-            # calculates the magnitude of z
-            z = np.linalg.norm(test_set_vector -
-                               projection_of_test_vector_onto_u_column_vector)
-            if (z < smallest_z):
-                smallest_z = z
-                prediction = j
+            projection = u_matrix[:, :1].T @ test_set_vector
+            similarity = np.linalg.norm(projection)
+            
+            if similarity > max_similarity:  # check to see the highest similarity score
+                max_similarity = similarity
+                prediction = j 
+                    
         if prediction == test_data_labels[i]:
             correct_counter += 1
             if prediction == 0:  # increment index 0 if prediction is a zero digit
@@ -208,7 +268,7 @@ def two_stage_classification(test_data_labels):
     correct_percentage_per_digit = []
     for i in range(len(correctness_counter_per_digit)):
         correct_percentage_per_digit.append(correctness_counter_per_digit[i]/100)
-        if correctness_counter_per_digit[i]/100 >= .50:    #determine which digit to skip
+        if correctness_counter_per_digit[i]/100 >= .80:    #determine which digit to skip
             digits_to_skip.append(i)      
     plt.title("Accuracy for each digit using one singular basis vector")
     plt.bar(digits, correct_percentage_per_digit)
@@ -225,6 +285,6 @@ def two_stage_classification(test_data_labels):
     """
     if len(digits_to_skip) != 10:        
         classification(test_data_labels)
-
 two_stage_classification(test_data_labels)
-# show_data(test_data_set[547])
+# classification(test_data_labels)
+
